@@ -17,24 +17,37 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
-export const checkoutSchema = z.object({
-  contactName: z.string().trim().min(2, "Full name is required."),
-  contactPhone: z.string().trim().min(7, "Phone number is too short."),
-  contactEmail: z
-    .string()
-    .trim()
-    .email("Enter a valid email.")
-    .optional()
-    .or(z.literal("")),
-  deliveryAddress: z.string().trim().optional().or(z.literal("")),
-  fulfillmentMethod: z.enum(["pickup", "delivery"]),
-  branchId: z.string().uuid("Please choose a valid branch."),
-  customerNote: z
-    .string()
-    .max(500, "Note is too long.")
-    .optional()
-    .or(z.literal("")),
-});
+export const checkoutSchema = z
+  .object({
+    contactName: z.string().trim().min(2, "Full name is required."),
+    contactPhone: z.string().trim().min(7, "Phone number is too short."),
+    contactEmail: z
+      .string()
+      .trim()
+      .email("Enter a valid email.")
+      .optional()
+      .or(z.literal("")),
+    deliveryAddress: z.string().trim().optional().or(z.literal("")),
+    fulfillmentMethod: z.enum(["pickup", "delivery"]),
+    branchId: z.string().uuid("Please choose a valid branch."),
+    customerNote: z
+      .string()
+      .max(500, "Note is too long.")
+      .optional()
+      .or(z.literal("")),
+  })
+  .superRefine((values, ctx) => {
+    if (
+      values.fulfillmentMethod === "delivery" &&
+      !values.deliveryAddress?.trim()
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["deliveryAddress"],
+        message: "Delivery address is required for delivery orders.",
+      });
+    }
+  });
 
 export const reviewSchema = z.object({
   rating: z.number().min(1).max(5),

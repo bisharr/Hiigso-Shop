@@ -9,9 +9,12 @@ import ShopPage from "../pages/ShopPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import CartPage from "../pages/CartPage";
 import CheckoutPage from "../pages/CheckoutPage";
+import CheckoutSuccessPage from "../pages/CheckoutSuccessPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import AccountPage from "../pages/AccountPage";
+import WishlistPage from "../pages/WishlistPage";
+import MyOrdersPage from "../pages/MyOrdersPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminProductsPage from "../pages/admin/AdminProductsPage";
@@ -25,12 +28,15 @@ export default function AppRoutes() {
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/shop/:slug" element={<ProductDetailsPage />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/account/orders" element={<MyOrdersPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
         </Route>
       </Route>
 

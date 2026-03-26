@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { HiOutlineShoppingCart } from "react-icons/hi2";
+import { HiOutlineHeart, HiOutlineShoppingCart } from "react-icons/hi2";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function PublicLayout() {
@@ -11,18 +11,21 @@ export default function PublicLayout() {
 
   const navClass = ({ isActive }) =>
     isActive
-      ? "text-blue-600 font-semibold"
-      : "text-slate-700 hover:text-blue-600";
+      ? "font-semibold text-blue-600"
+      : "font-medium text-slate-700 transition hover:text-blue-600";
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="text-xl font-bold text-slate-900">
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+          <Link
+            to="/"
+            className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"
+          >
             Hiigso Electronics
           </Link>
 
-          <nav className="hidden gap-6 md:flex">
+          <nav className="hidden items-center gap-6 md:flex">
             <NavLink to="/" className={navClass}>
               Home
             </NavLink>
@@ -34,36 +37,43 @@ export default function PublicLayout() {
             </NavLink>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to={user ? "/wishlist" : "/login"}
+              className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100"
+            >
+              <HiOutlineHeart className="h-5 w-5" />
+            </Link>
+
             <Link
               to="/cart"
-              className="rounded-full border border-slate-200 p-2 text-slate-700 hover:bg-slate-100"
+              className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100"
             >
-              <HiOutlineShoppingCart size={20} />
+              <HiOutlineShoppingCart className="h-5 w-5" />
             </Link>
 
             {!user ? (
               <>
                 <Link
                   to="/login"
-                  className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                  className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
                 >
                   Register
                 </Link>
               </>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Link
                   to="/account"
-                  className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                  className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
                 >
-                  {profile?.full_name || "My Account"}
+                  {profile?.full_name || "Account"}
                 </Link>
 
                 {(profile?.role === "admin" ||
@@ -72,7 +82,7 @@ export default function PublicLayout() {
                   profile?.role === "staff") && (
                   <Link
                     to="/admin"
-                    className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
                   >
                     Admin
                   </Link>
@@ -80,7 +90,7 @@ export default function PublicLayout() {
 
                 <button
                   onClick={handleLogout}
-                  className="rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
+                  className="rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
                 >
                   Logout
                 </button>
@@ -95,8 +105,36 @@ export default function PublicLayout() {
       </main>
 
       <footer className="mt-12 border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 text-sm text-slate-600 sm:px-6 lg:px-8">
-          © 2026 Hiigso Electronics Online. All rights reserved.
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-3 lg:px-8">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">
+              Hiigso Electronics
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              A modern electronics ecommerce platform designed for beautiful
+              customer shopping and strong multi-branch business control.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-slate-900">Quick Links</h4>
+            <div className="mt-3 space-y-2 text-sm text-slate-600">
+              <p>Home</p>
+              <p>Shop</p>
+              <p>Cart</p>
+              <p>Account</p>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-slate-900">Support</h4>
+            <div className="mt-3 space-y-2 text-sm text-slate-600">
+              <p>Secure checkout</p>
+              <p>Multi-branch support</p>
+              <p>Responsive shopping experience</p>
+              <p>Built with React + Supabase</p>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
