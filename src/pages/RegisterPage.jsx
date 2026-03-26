@@ -34,7 +34,7 @@ export default function RegisterPage() {
       return;
     }
 
-    const { error } = await signUp(validation.data);
+    const { data, error } = await signUp(validation.data);
 
     if (error) {
       toast.error(error.message);
@@ -42,12 +42,18 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Account created. Check your email.");
+    if (!data?.session) {
+      toast.success("Account created. Please confirm your email to continue.");
+    } else {
+      toast.success("Account created and signed in successfully.");
+    }
+
     setFormData({
       fullName: "",
       email: "",
       password: "",
     });
+
     setSubmitting(false);
   }
 

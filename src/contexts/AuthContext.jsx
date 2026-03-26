@@ -1,7 +1,24 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
+
+async function fetchUserProfile(userId) {
+  if (!userId) return null;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile fetch error:", error.message);
+    return null;
+  }
+
+  return data;
+}
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
@@ -9,72 +26,74 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchProfile(userId) {
+  async function bootstrapAuth() {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+      setLoading(true);
+
+      const {
+        data: { session: currentSession },
+        error,
+      } = await supabase.auth.getSession();
 
       if (error) {
-        console.error("Profile fetch error:", error.message);
+        console.error("Session error:", error.message);
+        setSession(null);
+        setUser(null);
         setProfile(null);
+        setLoading(false);
         return;
       }
 
-      setProfile(data);
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+
+      if (currentSession?.user?.id) {
+        const foundProfile = await fetchUserProfile(currentSession.user.id);
+        setProfile(foundProfile);
+      } else {
+        setProfile(null);
+      }
     } catch (error) {
-      console.error("Unexpected profile error:", error);
+      console.error("Bootstrap auth error:", error);
+      setSession(null);
+      setUser(null);
       setProfile(null);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    let mounted = true;
-
-    async function getInitialSession() {
-      setLoading(true);
-
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!mounted) return;
-
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
-
-      if (mounted) {
-        setLoading(false);
-      }
-    }
-
-    getInitialSession();
+    bootstrapAuth();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
+      if (!newSession?.user) {
         setProfile(null);
+        setLoading(false);
+        return;
       }
 
-      setLoading(false);
+      setLoading(true);
+
+      setTimeout(async () => {
+        try {
+          const foundProfile = await fetchUserProfile(newSession.user.id);
+          setProfile(foundProfile);
+        } catch (error) {
+          console.error("Deferred profile fetch error:", error);
+          setProfile(null);
+        } finally {
+          setLoading(false);
+        }
+      }, 0);
     });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -108,7 +127,19 @@ export function AuthProvider({ children }) {
 
   async function signOut() {
     const { error } = await supabase.auth.signOut();
+    if (!error) {
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+    }
     return { error };
+  }
+
+  async function refreshProfile() {
+    if (!user?.id) return null;
+    const foundProfile = await fetchUserProfile(user.id);
+    setProfile(foundProfile);
+    return foundProfile;
   }
 
   const value = useMemo(
@@ -120,7 +151,7 @@ export function AuthProvider({ children }) {
       signUp,
       signIn,
       signOut,
-      refreshProfile: () => user?.id && fetchProfile(user.id),
+      refreshProfile,
     }),
     [session, user, profile, loading],
   );
@@ -129,5 +160,11 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+
+  return context;
 }
