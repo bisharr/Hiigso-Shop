@@ -21,9 +21,9 @@ export default function AccountPage() {
       to: "/account/orders",
     },
     {
-      title: "Checkout",
-      text: "Complete your order securely.",
-      to: "/checkout",
+      title: "Notifications",
+      text: "View important order and account updates.",
+      to: "/account/notifications",
     },
   ];
 

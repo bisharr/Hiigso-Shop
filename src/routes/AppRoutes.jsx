@@ -15,10 +15,17 @@ import RegisterPage from "../pages/RegisterPage";
 import AccountPage from "../pages/AccountPage";
 import WishlistPage from "../pages/WishlistPage";
 import MyOrdersPage from "../pages/MyOrdersPage";
+import NotificationsPage from "../pages/NotificationsPage";
 
 import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import AdminProductsPage from "../pages/admin/AdminProductsPage";
 import AdminOrdersPage from "../pages/admin/AdminOrdersPage";
+import AdminProductEditorPage from "../pages/admin/AdminProductEditorPage";
+import AdminReviewsPage from "../pages/admin/AdminReviewsPage";
+import AdminBranchesPage from "../pages/admin/AdminBranchesPage";
+import AdminCategoriesPage from "../pages/admin/AdminCategoriesPage";
+import AdminBrandsPage from "../pages/admin/AdminBrandsPage";
+import AdminUsersPage from "../pages/admin/AdminUsersPage";
 
 export default function AppRoutes() {
   return (
@@ -36,6 +43,10 @@ export default function AppRoutes() {
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/account/orders" element={<MyOrdersPage />} />
+          <Route
+            path="/account/notifications"
+            element={<NotificationsPage />}
+          />
           <Route path="/wishlist" element={<WishlistPage />} />
         </Route>
       </Route>
@@ -50,7 +61,16 @@ export default function AppRoutes() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="products" element={<AdminProductsPage />} />
+          <Route
+            path="products/:productId"
+            element={<AdminProductEditorPage />}
+          />
           <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="reviews" element={<AdminReviewsPage />} />
+          <Route path="branches" element={<AdminBranchesPage />} />
+          <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="brands" element={<AdminBrandsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Route>
     </Routes>

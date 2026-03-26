@@ -3,8 +3,8 @@ import { Link, NavLink, Outlet } from "react-router-dom";
 export default function AdminLayout() {
   const linkClass = ({ isActive }) =>
     isActive
-      ? "block rounded-xl bg-slate-900 px-4 py-3 text-white"
-      : "block rounded-xl px-4 py-3 text-slate-700 hover:bg-slate-100";
+      ? "block rounded-xl bg-blue-800 px-4 py-3 text-white"
+      : "block rounded-xl px-4 py-3 text-slate-700 hover:bg-blue-100";
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -26,6 +26,21 @@ export default function AdminLayout() {
             </NavLink>
             <NavLink to="/admin/orders" className={linkClass}>
               Orders
+            </NavLink>
+            <NavLink to="/admin/reviews" className={linkClass}>
+              Reviews
+            </NavLink>
+            <NavLink to="/admin/branches" className={linkClass}>
+              Branches
+            </NavLink>
+            <NavLink to="/admin/categories" className={linkClass}>
+              Categories
+            </NavLink>
+            <NavLink to="/admin/brands" className={linkClass}>
+              Brands
+            </NavLink>
+            <NavLink to="/admin/users" className={linkClass}>
+              Users
             </NavLink>
           </nav>
         </aside>

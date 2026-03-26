@@ -22,6 +22,7 @@ export default function CheckoutPage() {
     contactPhone: profile?.phone || "",
     contactEmail: user?.email || "",
     fulfillmentMethod: "pickup",
+    paymentMethod: "evc",
     branchId: "",
     deliveryAddress: "",
     customerNote: "",
@@ -174,7 +175,7 @@ export default function CheckoutPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900">Checkout</h1>
         <p className="mt-2 text-slate-600">
-          Complete your order with secure customer and branch details.
+          Complete your order with branch, payment, and delivery details.
         </p>
       </div>
 
@@ -240,24 +241,44 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Fulfillment Method
-              </label>
-              <select
-                name="fulfillmentMethod"
-                value={formData.fulfillmentMethod}
-                onChange={handleChange}
-                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
-              >
-                <option value="pickup">Pickup</option>
-                <option value="delivery">Delivery</option>
-              </select>
-              {errors.fulfillmentMethod && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.fulfillmentMethod}
-                </p>
-              )}
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Fulfillment Method
+                </label>
+                <select
+                  name="fulfillmentMethod"
+                  value={formData.fulfillmentMethod}
+                  onChange={handleChange}
+                  className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                >
+                  <option value="pickup">Pickup</option>
+                  <option value="delivery">Delivery</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Payment Method
+                </label>
+                <select
+                  name="paymentMethod"
+                  value={formData.paymentMethod}
+                  onChange={handleChange}
+                  className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                >
+                  <option value="sahal_golis">Sahal / Golis</option>
+                  <option value="evc">EVC</option>
+                  <option value="edahab">E-Dahab</option>
+                  <option value="salaam_bank_waafi">Salaam Bank / Waafi</option>
+                  <option value="cash_on_delivery">Cash on Delivery</option>
+                </select>
+                {errors.paymentMethod && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.paymentMethod}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div>
@@ -334,6 +355,7 @@ export default function CheckoutPage() {
         <CheckoutSummaryCard
           items={items}
           fulfillmentMethod={formData.fulfillmentMethod}
+          paymentMethod={formData.paymentMethod}
         />
       </div>
     </div>

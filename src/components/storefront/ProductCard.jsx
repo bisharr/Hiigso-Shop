@@ -79,7 +79,7 @@ export default function ProductCard({ product }) {
 
           <Link
             to={`/shop/${product.slug}`}
-            className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600"
+            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-yellow-50 transition hover:bg-blue-900"
           >
             <HiOutlineShoppingBag className="h-4 w-4" />
             View

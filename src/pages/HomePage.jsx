@@ -59,7 +59,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 to="/shop"
-                className="rounded-2xl bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+                className="rounded-2xl hover:text-black bg-green-400 px-6 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
               >
                 Explore Store
               </Link>

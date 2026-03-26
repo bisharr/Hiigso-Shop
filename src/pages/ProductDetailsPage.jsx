@@ -11,6 +11,7 @@ import {
 import PageLoader from "../components/common/PageLoader";
 import EmptyState from "../components/common/EmptyState";
 import BranchStockList from "../components/storefront/BranchStockList";
+import ReviewForm from "../components/storefront/ReviewForm";
 import { formatCurrency } from "../lib/format";
 import {
   addToCart,
@@ -341,20 +342,40 @@ export default function ProductDetailsPage() {
                   <label className="mb-2 block text-sm font-semibold text-slate-700">
                     Choose Branch
                   </label>
-                  <select
-                    value={selectedBranchId}
-                    onChange={(e) => setSelectedBranchId(e.target.value)}
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500"
-                  >
-                    <option value="">Select a branch</option>
-                    {availableBranches.map((item) => (
-                      <option key={item.id} value={item.branch_id}>
-                        {item.branches?.name}{" "}
-                        {item.branches?.city ? `• ${item.branches.city}` : ""} •
-                        Qty {item.stock_quantity}
-                      </option>
-                    ))}
-                  </select>
+
+                  <div className="grid gap-3">
+                    {availableBranches.map((item) => {
+                      const active = selectedBranchId === item.branch_id;
+
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => setSelectedBranchId(item.branch_id)}
+                          className={`rounded-2xl border p-4 text-left transition ${
+                            active
+                              ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
+                              : "border-slate-200 bg-white hover:bg-slate-50"
+                          }`}
+                        >
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                              <p className="font-semibold text-slate-900">
+                                {item.branches?.name || "Branch"}
+                              </p>
+                              <p className="text-sm text-slate-500">
+                                {item.branches?.city || "City"}
+                              </p>
+                            </div>
+
+                            <div className="text-sm font-medium text-slate-700">
+                              Qty: {item.stock_quantity}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div>
@@ -404,53 +425,65 @@ export default function ProductDetailsPage() {
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-[32px] bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
-            <h2 className="text-2xl font-bold text-slate-900">
-              Product Description
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-              {product.description ||
-                product.short_description ||
-                "No description available."}
-            </p>
+          <div className="space-y-8">
+            <div className="rounded-[32px] bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+              <h2 className="text-2xl font-bold text-slate-900">
+                Product Description
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                {product.description ||
+                  product.short_description ||
+                  "No description available."}
+              </p>
 
-            <div className="mt-10">
-              <h3 className="text-xl font-bold text-slate-900">
-                Customer Reviews
-              </h3>
+              <div className="mt-10">
+                <h3 className="text-xl font-bold text-slate-900">
+                  Customer Reviews
+                </h3>
 
-              {!reviews.length ? (
-                <p className="mt-3 text-sm text-slate-600">
-                  No approved reviews yet for this product.
-                </p>
-              ) : (
-                <div className="mt-5 space-y-4">
-                  {reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-2xl border border-slate-200 p-5"
-                    >
-                      <div className="flex items-center justify-between gap-4">
-                        <h4 className="font-semibold text-slate-900">
-                          {review.title || "Customer Review"}
-                        </h4>
-                        <span className="text-sm font-medium text-amber-600">
-                          {review.rating}/5
-                        </span>
+                {!reviews.length ? (
+                  <p className="mt-3 text-sm text-slate-600">
+                    No approved reviews yet for this product.
+                  </p>
+                ) : (
+                  <div className="mt-5 space-y-4">
+                    {reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="rounded-2xl border border-slate-200 p-5"
+                      >
+                        <div className="flex items-center justify-between gap-4">
+                          <h4 className="font-semibold text-slate-900">
+                            {review.title || "Customer Review"}
+                          </h4>
+                          <span className="text-sm font-medium text-amber-600">
+                            {review.rating}/5
+                          </span>
+                        </div>
+
+                        <p className="mt-3 text-sm leading-6 text-slate-600">
+                          {review.comment || "No comment provided."}
+                        </p>
+
+                        <p className="mt-3 text-xs text-slate-400">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </p>
                       </div>
-
-                      <p className="mt-3 text-sm leading-6 text-slate-600">
-                        {review.comment || "No comment provided."}
-                      </p>
-
-                      <p className="mt-3 text-xs text-slate-400">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
+            {user ? (
+              <ReviewForm productId={product.id} onSubmitted={loadProduct} />
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <p className="text-sm text-slate-600">
+                  Please login to submit a review.
+                </p>
+              </div>
+            )}
           </div>
 
           <BranchStockList inventory={product.inventory || []} />

@@ -1,30 +1,108 @@
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import AdminPageHeader from "../../components/admin/AdminPageHeader";
+import AnalyticsStatCard from "../../components/admin/AnalyticsStatCard";
+import RecentOrdersTable from "../../components/admin/RecentOrdersTable";
+import LowStockList from "../../components/admin/LowStockList";
+import PageLoader from "../../components/common/PageLoader";
+import { formatCurrency } from "../../lib/format";
+import { getDashboardAnalytics } from "../../lib/db";
+
 export default function AdminDashboardPage() {
-  const stats = [
-    { title: "Total Orders", value: "245" },
-    { title: "Revenue", value: "$24,500" },
-    { title: "Pending Orders", value: "18" },
-    { title: "Low Stock Items", value: "12" },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [inventory, setInventory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadDashboard() {
+    setLoading(true);
+
+    const { data, error } = await getDashboardAnalytics();
+
+    if (error) {
+      console.error("Dashboard analytics error:", error);
+      toast.error(error.message || "Failed to load dashboard analytics.");
+      setOrders([]);
+      setInventory([]);
+      setLoading(false);
+      return;
+    }
+
+    setOrders(data?.orders || []);
+    setInventory(data?.inventory || []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const stats = useMemo(() => {
+    const totalRevenue = orders.reduce(
+      (sum, order) => sum + Number(order.total_amount || 0),
+      0,
+    );
+
+    const pendingOrders = orders.filter(
+      (order) => order.status === "pending",
+    ).length;
+    const deliveredOrders = orders.filter(
+      (order) => order.status === "delivered",
+    ).length;
+    const totalOrders = orders.length;
+
+    return {
+      totalRevenue,
+      pendingOrders,
+      deliveredOrders,
+      totalOrders,
+    };
+  }, [orders]);
+
+  const recentOrders = useMemo(() => orders.slice(0, 6), [orders]);
+
+  const lowStockItems = useMemo(() => {
+    return inventory.filter(
+      (item) => Number(item.stock_quantity) <= Number(item.low_stock_threshold),
+    );
+  }, [inventory]);
+
+  if (loading) {
+    return <PageLoader text="Loading dashboard..." />;
+  }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
-      <p className="mt-2 text-slate-600">
-        This dashboard will later connect to real analytics from Supabase.
-      </p>
+      <AdminPageHeader
+        title="Admin Dashboard"
+        subtitle="Monitor sales, orders, and stock performance across your business."
+      />
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((item) => (
-          <div
-            key={item.title}
-            className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
-          >
-            <p className="text-sm font-medium text-slate-500">{item.title}</p>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              {item.value}
-            </h2>
-          </div>
-        ))}
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <AnalyticsStatCard
+          label="Total Revenue"
+          value={formatCurrency(stats.totalRevenue)}
+          helper="All recorded orders"
+        />
+        <AnalyticsStatCard
+          label="Total Orders"
+          value={stats.totalOrders}
+          helper="Orders placed in system"
+        />
+        <AnalyticsStatCard
+          label="Pending Orders"
+          value={stats.pendingOrders}
+          helper="Orders waiting for action"
+        />
+        <AnalyticsStatCard
+          label="Delivered Orders"
+          value={stats.deliveredOrders}
+          helper="Completed successfully"
+        />
+      </div>
+
+      <div className="mt-8 grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+        <RecentOrdersTable orders={recentOrders} />
+        <LowStockList items={lowStockItems} />
       </div>
     </div>
   );

@@ -23,14 +23,27 @@ export default function ShopPage() {
       setLoading(true);
 
       const [
-        { data: productData },
-        { data: categoryData },
-        { data: brandData },
+        { data: productData, error: productError },
+        { data: categoryData, error: categoryError },
+        { data: brandData, error: brandError },
       ] = await Promise.all([
         getPublicProducts(),
         getActiveCategories(),
         getActiveBrands(),
       ]);
+
+      if (productError) {
+        console.error("Public products error:", productError);
+        toast.error(productError.message || "Failed to load products.");
+      }
+
+      if (categoryError) {
+        console.error("Categories error:", categoryError);
+      }
+
+      if (brandError) {
+        console.error("Brands error:", brandError);
+      }
 
       setProducts(productData || []);
       setCategories(categoryData || []);

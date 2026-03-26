@@ -1,9 +1,10 @@
-import { formatCurrency } from "../../lib/format";
+import { formatCurrency, formatPaymentMethod } from "../../lib/format";
 import { calculateCartSubtotal, calculateDeliveryFee } from "../../lib/db";
 
 export default function CheckoutSummaryCard({
   items = [],
   fulfillmentMethod = "pickup",
+  paymentMethod = "evc",
 }) {
   const subtotal = calculateCartSubtotal(items);
   const deliveryFee = calculateDeliveryFee(fulfillmentMethod);
@@ -36,6 +37,11 @@ export default function CheckoutSummaryCard({
       </div>
 
       <div className="mt-6 space-y-3 border-t border-slate-200 pt-5 text-sm">
+        <div className="flex items-center justify-between text-slate-600">
+          <span>Payment Method</span>
+          <span>{formatPaymentMethod(paymentMethod)}</span>
+        </div>
+
         <div className="flex items-center justify-between text-slate-600">
           <span>Subtotal</span>
           <span>{formatCurrency(subtotal)}</span>
