@@ -19,6 +19,7 @@ export default function AdminBranchesPage() {
     const { data, error } = await getAllBranches();
 
     if (error) {
+      console.error("Branches load error:", error);
       toast.error(error.message || "Failed to load branches.");
       setBranches([]);
       setLoading(false);
@@ -49,7 +50,7 @@ export default function AdminBranchesPage() {
     <div>
       <AdminPageHeader
         title="Manage Branches"
-        subtitle="Create and manage business branches across Somalia."
+        subtitle="Create and manage all business branches."
       />
 
       <div className="grid gap-8 xl:grid-cols-[0.95fr_1.05fr]">

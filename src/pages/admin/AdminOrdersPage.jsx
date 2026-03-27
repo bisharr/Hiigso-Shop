@@ -8,6 +8,7 @@ import {
   assignOrderStaff,
   getAdminOrders,
   getAdminStaffProfiles,
+  updateOrderPaymentStatus,
   updateOrderStatus,
 } from "../../lib/db";
 
@@ -22,6 +23,8 @@ const ORDER_STATUSES = [
   "refunded",
 ];
 
+const PAYMENT_STATUSES = ["pending", "paid", "failed", "refunded"];
+
 function getStatusClass(status) {
   switch (status) {
     case "delivered":
@@ -32,6 +35,8 @@ function getStatusClass(status) {
       return "bg-red-50 text-red-700 ring-1 ring-red-100";
     case "processing":
       return "bg-blue-50 text-blue-700 ring-1 ring-blue-100";
+    case "paid":
+      return "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100";
     default:
       return "bg-slate-100 text-slate-700 ring-1 ring-slate-200";
   }
@@ -87,6 +92,21 @@ export default function AdminOrdersPage() {
     setBusyOrderId("");
   }
 
+  async function handlePaymentStatusChange(orderId, paymentStatus) {
+    setBusyOrderId(orderId);
+
+    const { error } = await updateOrderPaymentStatus(orderId, paymentStatus);
+
+    if (error) {
+      toast.error(error.message || "Failed to update payment status.");
+    } else {
+      toast.success("Payment status updated.");
+      await loadOrdersPage();
+    }
+
+    setBusyOrderId("");
+  }
+
   async function handleAssignStaff(orderId, assignedStaffId) {
     setBusyOrderId(orderId);
 
@@ -128,7 +148,7 @@ export default function AdminOrdersPage() {
     <div>
       <AdminPageHeader
         title="Manage Orders"
-        subtitle="View full customer details, payment method, branch, delivery info, and order items."
+        subtitle="View full customer details, payment details, branch info, delivery address, and items."
       />
 
       <div className="mb-6 rounded-[28px] bg-white p-5 shadow-sm ring-1 ring-slate-200">
@@ -191,6 +211,11 @@ export default function AdminOrdersPage() {
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(order.status)}`}
                       >
                         {order.status}
+                      </span>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusClass(order.payment_status)}`}
+                      >
+                        Payment: {order.payment_status}
                       </span>
                     </div>
 
@@ -361,7 +386,7 @@ export default function AdminOrdersPage() {
                   )}
                 </div>
 
-                <div className="grid gap-4 xl:grid-cols-2">
+                <div className="grid gap-4 xl:grid-cols-3">
                   <div>
                     <label className="mb-2 block text-sm font-semibold text-slate-700">
                       Update Status
@@ -375,6 +400,26 @@ export default function AdminOrdersPage() {
                       className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-50"
                     >
                       {ORDER_STATUSES.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                      Update Payment Status
+                    </label>
+                    <select
+                      value={order.payment_status || "pending"}
+                      onChange={(e) =>
+                        handlePaymentStatusChange(order.id, e.target.value)
+                      }
+                      disabled={busyOrderId === order.id}
+                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-50"
+                    >
+                      {PAYMENT_STATUSES.map((status) => (
                         <option key={status} value={status}>
                           {status}
                         </option>

@@ -123,7 +123,7 @@ export default function CheckoutPage() {
 
     toast.success("Order placed successfully.");
     navigate(
-      `/checkout/success?orderNumber=${encodeURIComponent(order.order_number)}`,
+      `/checkout/success?orderNumber=${encodeURIComponent(order.order_number)}&paymentMethod=${encodeURIComponent(validation.data.paymentMethod)}&fullName=${encodeURIComponent(validation.data.contactName)}&phone=${encodeURIComponent(validation.data.contactPhone)}`,
     );
     setSubmitting(false);
   }

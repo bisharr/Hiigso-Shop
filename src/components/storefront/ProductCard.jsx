@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
-import { HiOutlineStar, HiOutlineShoppingBag } from "react-icons/hi2";
+import {
+  HiOutlineMapPin,
+  HiOutlineShoppingBag,
+  HiOutlineStar,
+} from "react-icons/hi2";
 import { formatCurrency } from "../../lib/format";
 
 function getPrimaryImage(product) {
@@ -12,8 +16,20 @@ function getPrimaryImage(product) {
   return primary?.image_url || null;
 }
 
+function getAvailableBranches(product) {
+  return (product?.inventory || []).filter(
+    (item) =>
+      item.branches?.is_active !== false &&
+      item.is_available &&
+      Number(item.stock_quantity) > 0,
+  );
+}
+
 export default function ProductCard({ product }) {
   const imageUrl = getPrimaryImage(product);
+  const availableBranches = getAvailableBranches(product);
+  const branchCount = availableBranches.length;
+  const topBranches = availableBranches.slice(0, 3);
 
   return (
     <div className="group overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-slate-200 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -63,6 +79,29 @@ export default function ProductCard({ product }) {
             "No description available."}
         </p>
 
+        <div className="mt-4 rounded-2xl bg-slate-50 p-3 ring-1 ring-slate-200">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+            <HiOutlineMapPin className="h-4 w-4 text-blue-600" />
+            {branchCount > 0
+              ? `${branchCount} branch(es) available`
+              : "No branch currently available"}
+          </div>
+
+          {branchCount > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {topBranches.map((item) => (
+                <span
+                  key={item.id}
+                  className="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
+                >
+                  {item.branches?.name || "Branch"}
+                  {item.branches?.city ? ` • ${item.branches.city}` : ""}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="mt-4 flex items-end justify-between gap-3">
           <div>
             <p className="text-2xl font-bold text-slate-900">
@@ -79,7 +118,7 @@ export default function ProductCard({ product }) {
 
           <Link
             to={`/shop/${product.slug}`}
-            className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-yellow-50 transition hover:bg-blue-900"
+            className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600"
           >
             <HiOutlineShoppingBag className="h-4 w-4" />
             View

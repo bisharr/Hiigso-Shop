@@ -12,6 +12,15 @@ export async function getActiveBranches() {
   return { data: data || [], error };
 }
 
+export async function getAllBranches() {
+  const { data, error } = await supabase
+    .from("branches")
+    .select("*")
+    .order("name", { ascending: true });
+
+  return { data: data || [], error };
+}
+
 export async function getActiveCategories() {
   const { data, error } = await supabase
     .from("categories")
@@ -40,7 +49,16 @@ export async function getFeaturedProducts(limit = 4) {
       *,
       categories(id, name, slug),
       brands(id, name, slug),
-      product_images(id, image_url, alt_text, is_primary, sort_order)
+      product_images(id, image_url, alt_text, is_primary, sort_order),
+      inventory(
+        id,
+        branch_id,
+        stock_quantity,
+        reserved_quantity,
+        low_stock_threshold,
+        is_available,
+        branches(id, name, city, is_active)
+      )
     `,
     )
     .eq("status", "active")
@@ -59,7 +77,16 @@ export async function getPublicProducts() {
       *,
       categories(id, name, slug),
       brands(id, name, slug),
-      product_images(id, image_url, alt_text, is_primary, sort_order)
+      product_images(id, image_url, alt_text, is_primary, sort_order),
+      inventory(
+        id,
+        branch_id,
+        stock_quantity,
+        reserved_quantity,
+        low_stock_threshold,
+        is_available,
+        branches(id, name, city, is_active)
+      )
     `,
     )
     .eq("status", "active")
@@ -82,8 +109,9 @@ export async function getPublicProductBySlug(slug) {
         branch_id,
         stock_quantity,
         reserved_quantity,
+        low_stock_threshold,
         is_available,
-        branches(id, name, city)
+        branches(id, name, city, address, phone, email, is_active)
       )
     `,
     )
@@ -694,15 +722,6 @@ export async function markAllNotificationsAsRead() {
 
 /* ---------------- ADMIN MASTER DATA ---------------- */
 
-export async function getAllBranches() {
-  const { data, error } = await supabase
-    .from("branches")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  return { data: data || [], error };
-}
-
 export async function createBranch(payload) {
   const { data, error } = await supabase
     .from("branches")
@@ -834,7 +853,16 @@ export async function getAdminProducts() {
       *,
       categories(id, name, slug),
       brands(id, name, slug),
-      product_images(id, image_url, alt_text, is_primary, sort_order)
+      product_images(id, image_url, alt_text, is_primary, sort_order),
+      inventory(
+        id,
+        branch_id,
+        stock_quantity,
+        reserved_quantity,
+        low_stock_threshold,
+        is_available,
+        branches(id, name, city, is_active)
+      )
     `,
     )
     .order("created_at", { ascending: false });
@@ -858,7 +886,7 @@ export async function getAdminProductById(productId) {
         reserved_quantity,
         low_stock_threshold,
         is_available,
-        branches(id, name, city)
+        branches(id, name, city, address, phone, email, is_active)
       )
     `,
     )
@@ -1175,6 +1203,17 @@ export async function updateOrderStatus(orderId, status) {
       type: "info",
     });
   }
+
+  return { data, error };
+}
+
+export async function updateOrderPaymentStatus(orderId, paymentStatus) {
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ payment_status: paymentStatus })
+    .eq("id", orderId)
+    .select()
+    .single();
 
   return { data, error };
 }
