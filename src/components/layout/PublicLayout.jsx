@@ -62,7 +62,7 @@ export default function PublicLayout() {
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
+                  className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
                 >
                   Register
                 </Link>

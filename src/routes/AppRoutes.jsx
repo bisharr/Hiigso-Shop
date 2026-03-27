@@ -3,6 +3,7 @@ import PublicLayout from "../components/layout/PublicLayout";
 import AdminLayout from "../components/layout/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleProtectedRoute from "./RoleProtectedRoute";
+import OrderDetailsPage from "../pages/OrderDetailsPage";
 
 import HomePage from "../pages/HomePage";
 import ShopPage from "../pages/ShopPage";
@@ -42,6 +43,10 @@ export default function AppRoutes() {
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route
+            path="/account/orders/:orderId"
+            element={<OrderDetailsPage />}
+          />
           <Route path="/account/orders" element={<MyOrdersPage />} />
           <Route
             path="/account/notifications"

@@ -1270,3 +1270,51 @@ export async function getDashboardAnalytics() {
     error: ordersError || inventoryError || null,
   };
 }
+
+export function groupCartItemsByBranch(items = []) {
+  const map = new Map();
+
+  for (const item of items) {
+    const key = item.branch_id || "unknown";
+
+    if (!map.has(key)) {
+      map.set(key, {
+        branch_id: item.branch_id,
+        branch_name: item.branches?.name || "Branch",
+        branch_city: item.branches?.city || "",
+        items: [],
+      });
+    }
+
+    map.get(key).items.push(item);
+  }
+
+  return Array.from(map.values());
+}
+
+export function getCartBranchCount(items = []) {
+  return new Set(items.map((item) => item.branch_id).filter(Boolean)).size;
+}
+
+export function buildCustomerOrderWhatsappMessage(order) {
+  if (!order) return "";
+
+  const itemsText = (order.order_items || [])
+    .map(
+      (item) =>
+        `- ${item.product_name} x${item.quantity} (${Number(item.line_total || 0).toFixed(2)})`,
+    )
+    .join("\n");
+
+  return encodeURIComponent(
+    `Salaan Hiigso Electronics,\n\n` +
+      `Waxaan rabaa xog ku saabsan order-kayga.\n` +
+      `Order Number: ${order.order_number || ""}\n` +
+      `Magaca: ${order.contact_name || ""}\n` +
+      `Telefoon: ${order.contact_phone || ""}\n` +
+      `Payment Method: ${order.payment_method || ""}\n` +
+      `Status: ${order.status || ""}\n` +
+      `Items:\n${itemsText}\n\n` +
+      `Mahadsanid.`,
+  );
+}
