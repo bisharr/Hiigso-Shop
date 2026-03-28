@@ -134,7 +134,7 @@ export default function CartPage() {
           action={
             <Link
               to="/shop"
-              className="inline-flex rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-800"
+              className="inline-flex rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-slate-800"
             >
               Browse Products
             </Link>

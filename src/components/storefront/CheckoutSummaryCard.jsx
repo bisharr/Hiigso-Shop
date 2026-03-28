@@ -61,7 +61,8 @@ export default function CheckoutSummaryCard({
 
       <div className="rounded-[28px] bg-blue-50 p-6 shadow-sm ring-1 ring-blue-100">
         <h3 className="text-lg font-bold text-slate-900">
-          Payment Information
+          Payment Information (Ku dir Lacagta adigoo isticmaalaya{" "}
+          {paymentDetails.label})Kan
         </h3>
 
         <div className="mt-4 space-y-2 text-sm text-slate-700">

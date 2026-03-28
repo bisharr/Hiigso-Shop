@@ -130,7 +130,7 @@ export default function MyOrdersPage() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to={`/account/orders/${order.id}`}
-                  className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
+                  className="rounded-2xl bg-slate-300 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
                 >
                   View Details
                 </Link>

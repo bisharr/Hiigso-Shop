@@ -35,7 +35,7 @@ export default function CartSummaryCard({ items = [] }) {
 
       <Link
         to="/checkout"
-        className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-blue-600"
+        className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-600"
       >
         Proceed to Checkout
       </Link>

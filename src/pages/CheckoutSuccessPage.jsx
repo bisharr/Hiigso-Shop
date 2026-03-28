@@ -50,10 +50,11 @@ export default function CheckoutSuccessPage() {
             Farriin Somali ah
           </h2>
           <p className="mt-2 text-sm leading-7 text-slate-700">
-            Waad ku mahadsan tahay dalabkaaga. Order-kaaga si guul leh ayuu u
-            dhacay. Fadlan noo soo dir WhatsApp si aan kuugu xaqiijino
-            dalabkaaga, gaar ahaan haddii aad lacag ku bixisay EVC, E-Dahab,
-            Sahal/Golis, ama Waafi.
+            Waad ku mahadsan tahay dalabkaaga. Order-kaaga si Wacan ayuu noo soo
+            gaaray . Fadlan hadii Aad dagdagsan tahay noo soo dir fariin
+            WhatsAppkan si aan kuugu xaqiijino dalabkaaga Laguuna dhakhsado,
+            gaar ahaan haddii aad lacag ku bixisay EVC, E-Dahab, Sahal/Golis,
+            ama Waafi.
           </p>
         </div>
 
@@ -81,14 +82,14 @@ export default function CheckoutSuccessPage() {
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
           >
             <HiOutlineChatBubbleLeftRight className="h-5 w-5" />
-            Send WhatsApp Confirmation
+            WhatsAppKeena
           </a>
 
           <Link
             to="/account/orders"
-            className="rounded-2xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
+            className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
           >
-            View My Orders
+            View My Orders(Lasoco Dalabkada)
           </Link>
 
           <Link
